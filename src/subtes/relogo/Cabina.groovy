@@ -11,8 +11,14 @@ import repast.simphony.relogo.schedule.Go
 import repast.simphony.relogo.schedule.Setup
 import subtes.ReLogoTurtle
 
-class Human extends ReLogoTurtle {
-
-	
+class Cabina extends ReLogoTurtle {
+	Subte subte
+	def desplazamiento
+	def seguirSubte() {
+		if (subte) {
+			setXcor(subte.getXcor())
+			setYcor(subte.getYcor()+desplazamiento)
+		}
+	}
 
 }

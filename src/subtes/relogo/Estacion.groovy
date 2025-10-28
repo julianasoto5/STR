@@ -13,5 +13,20 @@ import subtes.ReLogoTurtle
 
 @Plural("Estaciones")
 class Estacion extends ReLogoTurtle {
+	
 	def posX, posY, linea
+	def xMin, xMax
+	Queue<Pasajero> fila = new LinkedList<>()
+	
+	def enEstacion(pos) {
+		return (pos>=xMin) && (pos <=xMax)
+	}
+	
+	def hacerFila(Pasajero p) {
+		fila.add(p)
+	}
+	
+	def getPasajeroEnFila() {
+		return fila.poll()
+	}
 }

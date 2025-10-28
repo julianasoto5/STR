@@ -15,6 +15,119 @@ import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 public class ReLogoLink<T> extends BaseLink<T>	{
 
 	/**
+	 * Returns an agentset of cabinas on a given patch.
+	 * 
+	 * @param p
+	 *            a patch
+	 * @return agentset of cabinas on patch p
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public AgentSet<subtes.relogo.Cabina> cabinasOn(Patch p){
+		AgentSet<subtes.relogo.Cabina> result = new AgentSet<subtes.relogo.Cabina>();						
+		for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),getMyObserver(),"cabina")){
+			if (t instanceof subtes.relogo.Cabina)
+			result.add((subtes.relogo.Cabina)t);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an agentset of cabinas on the same patch as a turtle.
+	 * 
+	 * @param t
+	 *            a turtle
+	 * @return agentset of cabinas on the same patch as turtle t
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public AgentSet<subtes.relogo.Cabina> cabinasOn(Turtle t){
+		AgentSet<subtes.relogo.Cabina> result = new AgentSet<subtes.relogo.Cabina>();						
+		for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),getMyObserver(),"cabina")){
+			if (tt instanceof subtes.relogo.Cabina)
+			result.add((subtes.relogo.Cabina)tt);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an agentset of cabinas on the patches in a collection or on the patches
+	 * that a collection of turtles are.
+	 * 
+	 * @param a
+	 *            a collection
+	 * @return agentset of cabinas on the patches in collection a or on the patches
+	 *         that collection a turtles are
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public AgentSet<subtes.relogo.Cabina> cabinasOn(Collection c){
+
+		if (c == null || c.isEmpty()){
+			return new AgentSet<subtes.relogo.Cabina>();
+		}
+
+		Set<subtes.relogo.Cabina> total = new HashSet<subtes.relogo.Cabina>();
+		if (c.iterator().next() instanceof Turtle){
+			for (Object o : c){
+				if (o instanceof Turtle){
+					Turtle t = (Turtle) o;
+					total.addAll(cabinasOn(t));
+				}
+			}
+		}
+		else {
+			for (Object o : c){
+				if (o instanceof Patch){
+					Patch p = (Patch) o;
+					total.addAll(cabinasOn(p));
+				}
+			}
+		}
+		return new AgentSet<subtes.relogo.Cabina>(total);
+	}
+
+	/**
+	 * Queries if object is a cabina.
+	 * 
+	 * @param o
+	 *            an object
+	 * @return true or false based on whether the object is a cabina
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public boolean isCabinaQ(Object o){
+		return (o instanceof subtes.relogo.Cabina);
+	}
+
+	/**
+	 * Returns the cabina with the given who number.
+	 * 
+	 * @param number
+	 *            a number
+	 * @return turtle number
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public subtes.relogo.Cabina cabina(Number number){
+		Turtle turtle = Utility.turtleU(number.intValue(), getMyObserver());
+		if (turtle instanceof subtes.relogo.Cabina)
+			return (subtes.relogo.Cabina) turtle;
+		return null;
+	}
+
+	/**
+	 * Returns an agentset containing all cabinas.
+	 * 
+	 * @return agentset of all cabinas
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Cabina")
+	public AgentSet<subtes.relogo.Cabina> cabinas(){
+		AgentSet<subtes.relogo.Cabina> a = new AgentSet<subtes.relogo.Cabina>();
+		for (Object e : this.getMyObserver().getContext().getObjects(subtes.relogo.Cabina.class)) {
+			if (e instanceof subtes.relogo.Cabina){
+				a.add((subtes.relogo.Cabina)e);
+			}
+		}
+		return a;
+	}
+
+	/**
 	 * Returns an agentset of estaciones on a given patch.
 	 * 
 	 * @param p
@@ -122,119 +235,6 @@ public class ReLogoLink<T> extends BaseLink<T>	{
 		for (Object e : this.getMyObserver().getContext().getObjects(subtes.relogo.Estacion.class)) {
 			if (e instanceof subtes.relogo.Estacion){
 				a.add((subtes.relogo.Estacion)e);
-			}
-		}
-		return a;
-	}
-
-	/**
-	 * Returns an agentset of humans on a given patch.
-	 * 
-	 * @param p
-	 *            a patch
-	 * @return agentset of humans on patch p
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public AgentSet<subtes.relogo.Human> humansOn(Patch p){
-		AgentSet<subtes.relogo.Human> result = new AgentSet<subtes.relogo.Human>();						
-		for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),getMyObserver(),"human")){
-			if (t instanceof subtes.relogo.Human)
-			result.add((subtes.relogo.Human)t);
-		}
-		return result;
-	}
-
-	/**
-	 * Returns an agentset of humans on the same patch as a turtle.
-	 * 
-	 * @param t
-	 *            a turtle
-	 * @return agentset of humans on the same patch as turtle t
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public AgentSet<subtes.relogo.Human> humansOn(Turtle t){
-		AgentSet<subtes.relogo.Human> result = new AgentSet<subtes.relogo.Human>();						
-		for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),getMyObserver(),"human")){
-			if (tt instanceof subtes.relogo.Human)
-			result.add((subtes.relogo.Human)tt);
-		}
-		return result;
-	}
-
-	/**
-	 * Returns an agentset of humans on the patches in a collection or on the patches
-	 * that a collection of turtles are.
-	 * 
-	 * @param a
-	 *            a collection
-	 * @return agentset of humans on the patches in collection a or on the patches
-	 *         that collection a turtles are
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public AgentSet<subtes.relogo.Human> humansOn(Collection c){
-
-		if (c == null || c.isEmpty()){
-			return new AgentSet<subtes.relogo.Human>();
-		}
-
-		Set<subtes.relogo.Human> total = new HashSet<subtes.relogo.Human>();
-		if (c.iterator().next() instanceof Turtle){
-			for (Object o : c){
-				if (o instanceof Turtle){
-					Turtle t = (Turtle) o;
-					total.addAll(humansOn(t));
-				}
-			}
-		}
-		else {
-			for (Object o : c){
-				if (o instanceof Patch){
-					Patch p = (Patch) o;
-					total.addAll(humansOn(p));
-				}
-			}
-		}
-		return new AgentSet<subtes.relogo.Human>(total);
-	}
-
-	/**
-	 * Queries if object is a human.
-	 * 
-	 * @param o
-	 *            an object
-	 * @return true or false based on whether the object is a human
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public boolean isHumanQ(Object o){
-		return (o instanceof subtes.relogo.Human);
-	}
-
-	/**
-	 * Returns the human with the given who number.
-	 * 
-	 * @param number
-	 *            a number
-	 * @return turtle number
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public subtes.relogo.Human human(Number number){
-		Turtle turtle = Utility.turtleU(number.intValue(), getMyObserver());
-		if (turtle instanceof subtes.relogo.Human)
-			return (subtes.relogo.Human) turtle;
-		return null;
-	}
-
-	/**
-	 * Returns an agentset containing all humans.
-	 * 
-	 * @return agentset of all humans
-	 */
-	@ReLogoBuilderGeneratedFor("subtes.relogo.Human")
-	public AgentSet<subtes.relogo.Human> humans(){
-		AgentSet<subtes.relogo.Human> a = new AgentSet<subtes.relogo.Human>();
-		for (Object e : this.getMyObserver().getContext().getObjects(subtes.relogo.Human.class)) {
-			if (e instanceof subtes.relogo.Human){
-				a.add((subtes.relogo.Human)e);
 			}
 		}
 		return a;
