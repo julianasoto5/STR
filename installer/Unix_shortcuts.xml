@@ -5,10 +5,10 @@
 
   <skipIfNotSupported/>
   
-  <programGroup defaultName="Subtes1" location="applications"/>
+  <programGroup defaultName="subtes" location="applications"/>
   
   <shortcut
-     name="Subtes1"
+     name="subtes"
      programGroup="yes"
      desktop="no"
      applications="no"
@@ -18,7 +18,7 @@
      commandLine=""
      workingDirectory="$INSTALL_PATH"
      description="Model"
-     iconFile="$INSTALL_PATH/Subtes1/icons/model.png"
+     iconFile="$INSTALL_PATH/subtes/icons/model.png"
      iconIndex="0"
      type="Application"
      encoding="UTF-8"
@@ -36,13 +36,13 @@
      applications="no"
      startMenu="no"
      startup="no"
-     target="$INSTALL_PATH/Subtes1/docs/index.html"
+     target="$INSTALL_PATH/subtes/docs/index.html"
      workingDirectory="$INSTALL_PATH/docs"
      commandLine=""
      initialState="noShow"
      iconFile="help"
      iconIndex="0" 
-     url="$INSTALL_PATH/Subtes1/docs/index.html"                                
+     url="$INSTALL_PATH/subtes/docs/index.html"                                
      type="Application"
      encoding="UTF-8" 
    	 createForAll="true"  
@@ -52,7 +52,7 @@
   </shortcut>
    
   <shortcut
-     name="Subtes1 Uninstaller"
+     name="subtes Uninstaller"
      programGroup="yes"
      desktop="no"
      applications="no"

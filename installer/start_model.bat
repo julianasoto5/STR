@@ -1,5 +1,5 @@
 @ECHO OFF
-TITLE Subtes1
+TITLE subtes
 
 REM Repast Simphony model run script for Windows systems 
 REM 
@@ -19,8 +19,8 @@ REM User model lib jars
 SET CP=%CP%;lib/*
 
 REM Change to the project directory
-CD "Subtes1"
+CD "subtes"
 
 REM Start the Model
-START javaw -XX:+IgnoreUnrecognizedVMOptions --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal.objects=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED -cp "%CP%" repast.simphony.runtime.RepastMain "./Subtes1.rs"
+START javaw -XX:+IgnoreUnrecognizedVMOptions --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal.objects=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED -cp "%CP%" repast.simphony.runtime.RepastMain "./subtes.rs"
  

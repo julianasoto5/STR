@@ -5,10 +5,10 @@
 
   <skipIfNotSupported/>
   
-  <programGroup defaultName="Subtes1" location="applications"/>
+  <programGroup defaultName="subtes" location="applications"/>
   
   <shortcut
-            name="Subtes1"
+            name="subtes"
             programGroup="yes"
             desktop="no"
             applications="no"
@@ -18,7 +18,7 @@
      		commandLine=""
      		workingDirectory="$INSTALL_PATH"
             description="This runs the model"
-            iconFile="$INSTALL_PATH\Subtes1\icons\model.bmp"
+            iconFile="$INSTALL_PATH\subtes\icons\model.bmp"
      		iconIndex="0"
      		initialState="noShow">
             
@@ -32,7 +32,7 @@
             applications="no"
             startMenu="no"
             startup="no"
-            target="$INSTALL_PATH\Subtes1\docs\index.html"
+            target="$INSTALL_PATH\subtes\docs\index.html"
             commandLine=""
             iconFile="%SystemRoot%\system32\SHELL32.dll"
      		iconIndex="23" 
@@ -43,7 +43,7 @@
     </shortcut>
 
     <shortcut
-            name="Subtes1 Uninstaller"
+            name="subtes Uninstaller"
             programGroup="yes"
             desktop="no"
             applications="no"
