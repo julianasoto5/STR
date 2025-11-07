@@ -27,47 +27,15 @@ class Pasajero extends ReLogoTurtle {
         if (!enVagon) {
             enVagon = true
             miVagon = v
-            setColor(violet())
-			
+            //setColor(violet())
         }
     }
     
     def bajar() {
 		die()
-		//estado = "reborn"
-		/*
-        if (enVagon && miVagon) {
-            enVagon = false
-            // Reposicionar en la estación
-            setXcor(miVagon.getXcor())
-            setYcor(miVagon.getYcor())
-            setColor(green())
-            showTurtle()
-            miVagon = null
-        }*/
     }
-    /*
-    def mover() {
-        
-		if (!enVagon) {
-            // Comportamiento normal buscando subte
-            rt(random(20) - 10)
-            fd(velocidad)
-            
-            // Mantener en área del andén
-            if (estacion.linea == "C") {
-                if (getYcor() < 6) setYcor(6)
-                if (getYcor() > 15) setYcor(14)
-            }
-        }else seguirVagon()
-    }
-	
-	*/
 	
 	def mover() {
-		//double currentTick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		//if(tick_inicio < currentTick) return
-		//println("Estado: "+ estado)
 		switch (estado) {
 			case "enEstacion":
 				//println("moviendose")
@@ -82,11 +50,10 @@ class Pasajero extends ReLogoTurtle {
 				}
 				break
 			case "haciendoFila": //no hace nada
-				
 				break
 			case "enVagon":
 				seguirVagon()
-				setColor(pink())
+				//setColor(pink())
 				break
 			case "bajarVagon": 
 				bajar();

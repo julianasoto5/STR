@@ -10,7 +10,7 @@ import repast.simphony.relogo.schedule.Setup;
 import subtes.ReLogoObserver;
 
 class UserObserver extends ReLogoObserver{
-
+	def limAnden = 24
 	
 	def TIEMPO_TOTAL_SIMULACION = 10000
 	
@@ -30,13 +30,17 @@ class UserObserver extends ReLogoObserver{
 	def estacionF, estacionC
 	def capacidadC, capacidadF,frecuenciaC, frecuenciaF, porcentaje_a_F, nuevos_usuarios, andenC_ocupacion, andenF_ocupacion, transferidos
 	
+	def numVagones = 3  // Número de vagones
+	
 	Subte subteC = null, subteF = null
 	 @Setup
     def setup() {
         clearAll()
 		
-		base_total = getTotalPasajerosBase(tipo_dia)
+		setupFondo()
 		
+	
+		base_total = getTotalPasajerosBase(tipo_dia)
 		PASAJEROS_TOTAL_C = (int) (base_total * (1 - PORCENTAJE_A_F / 100.0))
 		PASAJEROS_TOTAL_F = (int) (base_total * (PORCENTAJE_A_F / 100.0) + NUEVOS_USUARIOS_F)
 		
@@ -52,110 +56,112 @@ class UserObserver extends ReLogoObserver{
 			frecuencia_hatch_F = TIEMPO_TOTAL_SIMULACION
 		}
 		
-/*		createTests(1){
-			setShape("estacion2")  // Tu png de fondo
-			setxy(0, 0)
-			size = 30  // Muy grande
-			setLabel("")
-			// Hacer que se quede atrás de otros agentes
-		}
-*/		setDefaultShape(Pasajero, "person")
-        setDefaultShape(Estacion, "flag")
+		setDefaultShape(Pasajero, "person")
+        setDefaultShape(Estacion, "PuertaAzul")
 		setDefaultShape(Subte, "default")
-		setDefaultShape(Cabina, "subteazul")
-		setDefaultShape(Vagon, "vagonazul")
-	    // Pintamos los patches
-	    ask(patches()) {
-	        if (pxcor > 5) { //5-16
-	            setPcolor(blue())   // Andén C
-	        } 
-	        else if ((pxcor < 0)&&(pxcor > -11)) { //-11 - 0
-	            setPcolor(green())  // Andén F
-	        }
-	        else {
-	            setPcolor(black())  
-	        }
-	    }
-
-
+		setDefaultShape(Cabina, "SubteAzul")
+		setDefaultShape(Vagon, "VagonAzul")
 		
+		createInicial()
+
+	 }
+	 
+	 def createInicial() {
+		 
 		 estacionC = createEstaciones(1){
-			linea = "C"
-			xMin = 5
-			xMax = 17
-			setxy(9, 0)
-			setSize(4)
-			setColor(red())
-			setLabel("DIA "+tipo_dia)
-		}.first()
+			 linea = "C"
+			 xMin = limAnden
+			 setxy(limAnden-1, 0)
+			 setSize(5)
+		 }.first()
+		 
+		 estacionF = createEstaciones(1){
+			 setShape("PuertaRoja")
+			 linea = "F"
+			 xMin = -limAnden
+			 setxy(-limAnden+1, 0)
+			 setSize(5)
+		 }.first()
+		 
+		 // Subte C - Comienza desde ARRIBA (Y positivo)
+		 subteC = createSubtes(1){
+			 hideTurtle()
+			 linea = "C"
+			 estado = "entrando"
+			 posInicial = limAnden+4
+			 frecuencia = frecuenciaC
+			 estacion = estacionC
+			 capacidad = capacidadC
+			 numVagones = numVagones  // Pasar el número de vagones
+			 setColor(blue())
+			 setxy(posInicial, 50)
+			 setSize(10)
+			 setHeading(0) // Mirando hacia abajo
+		 }.first()  // ← .first() para obtener el Subte individual
+		 
+		 subteF = createSubtes(1){
+			 hideTurtle()
+			 linea = "F"
+			 estado = "afuera"
+			 posInicial = -limAnden-4
+			 frecuencia = frecuenciaF
+			 estacion = estacionF
+			 capacidad = capacidadF
+			 numVagones = numVagones  // Pasar el número de vagones
+			 setColor(red())
+			 setxy(posInicial, 50)
+			 setSize(10)
+			 setHeading(0)
+		 }.first()// ← .first() para obtener el Subte individual
 		
-		estacionF = createEstaciones(1){
-			linea = "F"
-			xMin = -11
-			xMax = 0
-			setxy(-8, 0)
-			setSize(4)
-			setColor(yellow())
-		}.first()
+		 // Crear pasajeros de la línea C (andén azul)
+		 createPasajeros(10) {
+			 estacion = estacionC
+			 setSize(2.5)
+			 setColor(blue())
+			 setxy(random(limAnden-2)-1, randomYcor())
+		 }
+		 
+		 // Crear pasajeros de la línea F (andén verde)
+		 createPasajeros(10) {
+			 estacion = estacionF
+			 setSize(2.5)
+			 setColor(red())
+			 setxy(random(-limAnden+2)+1, randomYcor())
+		 }
+		 		 
+		 subteF.createFormacion()
+		 subteC.createFormacion()
 		
-		// Crear pasajeros de la línea C (andén azul)
-		createPasajeros(100) {
-			estacion = estacionC
-			setColor(white())
-			setxy(random(11) + 5, randomYcor())
-			setHeading(random(2) == 0 ? 0 : 180)
-		}
-		
-		// Crear pasajeros de la línea F (andén verde)
-		createPasajeros(100) {
-			estacion = estacionF
-			setColor(yellow())
-			setxy(random(11) - 11, randomYcor())
-			setHeading(random(2) == 0 ? 0 : 180)
-		}
-		
-		
-		
-		subteC = createSubtes(1){
-			linea = "C"
-			estado = "entrando"
-			posInicial = 2.5
-			frecuencia = frecuenciaC
-			estacion = estacionC
-			capacidad = capacidadC
-			setColor(blue())
-			setxy(posInicial, 15)
-			setSize(0)
-			setHeading(180)
-			hideTurtle()
-			
-		}.first()  // ← .first() para obtener el Subte individual
-		
-		subteF = createSubtes(1){
-			linea = "F"
-			estado = "entrando"
-			posInicial = -13.5
-			frecuencia = frecuenciaF
-			estacion = estacionF
-			capacidad = capacidadF
-			setColor(green())
-			setxy(posInicial, 15)
-			setSize(0)
-			setHeading(180)
-			hideTurtle()
-		}.first()// ← .first() para obtener el Subte individual
-				
-		subteF.createFormacion()
-		subteC.createFormacion()
-		/*setupVagon(subteC)  // Ahora son Subte individuales
-		setupVagon(subteF)
-		
-		setupCabinas(subteC)
-		setupCabinas(subteF)
-		*/
-		
-		
-
+	 }
+	 
+	 // Fondo con patches
+	 def setupFondo() {
+		 ask(patches()){
+			 setPcolor(gray()+2) //Fondo
+			 if ((pxcor == -22 && pxcor == -21) || (pxcor == 22 && pxcor == 21)) { setPcolor(yellow()) } //Líneas de seguridad
+			 if (pxcor == 0) { setPcolor(black()) } //Separador
+			 
+			 //Anden Subte F (-24 a -32)
+			 if (pxcor <= -limAnden) {
+				 if (pycor < -30) setPcolor(gray()-3) //Fin del anden
+				 else {
+					 if ((pxcor == -26) || (pxcor == -30)) setPcolor(gray()-2)	//Rieles
+					 else if(pxcor <= -25 && pxcor >= -31 && pycor % 2 == 0) setPcolor(brown()+1) //Tablas
+						 else setPcolor(brown()-2)//Tierra
+				 }
+			 }
+			 
+			 //Anden Subte C (24 a 32)
+			 if (pxcor >= limAnden) {
+				 if (pycor < -30) setPcolor(gray()-3) //Fin del anden
+				 else {
+					 if ((pxcor == 26) || (pxcor == 30)) setPcolor(gray()-2)	//Rieles
+					 else if(pxcor >= 25 && pxcor <= 31 && pycor % 2 == 0) setPcolor(brown()+1) //Tablas
+							 else setPcolor(brown()-2)//Tierra
+				 }
+			 }
+		 }
 	 }
     
 
@@ -187,47 +193,7 @@ class UserObserver extends ReLogoObserver{
 		}
 
     }
-	
-	def setupVagon(Subte subte) {
-		// Crear el vagón asociado a este subte
-		subte.vagon = createVagones(1) {
-			setSubtePadre(subte)
-			setLinea(subte.linea)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor())
-			setShape("square")
-			setColor(pink())
-			setSize(3.5)
-		}.first()
-	}
-	
-	def setupCabinas(Subte subte) {
-		setDefaultShape(Cabina, "truck")
-		
-		// Crear el vagón asociado a este subte
-		subte.cabinaDelantera = createCabinas(1) {
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()-5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(0)
-			setLabel("FRONT")
-		}.first()
-		
-		subte.cabinaTrasera = createCabinas(1){
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()+5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(180)
-			setLabel("BACK")
-		}.first()
-		
-	}
 
-	
 	def getTotalPasajerosBase(String tipoDia) {
 		switch (tipoDia) {
 			case "laboral":
@@ -249,25 +215,18 @@ class UserObserver extends ReLogoObserver{
 	}
 	
 	def crearPasajero(String lineaDestino) {
-		def xRange = (lineaDestino == "C") ? [6, 14] : [-10, -2]
-		def colorPasajero = (lineaDestino == "C") ? white() : yellow()
+		def xRange = (lineaDestino == "C") ? [1, 22] : [-1, -22]
+		def colorPasajero = (lineaDestino == "C") ? blue() : red()
 		
 		createPasajeros(1) {
 			linea = lineaDestino
 			estacion = (linea == "C") ? estacionC : estacionF
 			setColor(colorPasajero)
 			setxy(random(xRange[1] - xRange[0]) + xRange[0], randomYcor())
-			//tick_inicio = ticks
+			setSize(2)
 		}
 	}
 	
-	
-	/* FUNCIONES PARA MOSTRAR EN EL MONITOR	*/
-	//addMonitorWL("andenC_ocupacion", "Personas en andén C", 5)
-	//addMonitorWL("andenF_ocupacion", "Personas en andén F", 5)
-	//addMonitorWL("transferidos", "Pasajeros transferidos a F", 5)
-	//addMonitorWL("getEspacioC", "Espacio en linea C", 1)
-	//addMonitorWL("getEspacioF", "Espacio en linea F", 1)
 	def andenC_ocupacion() {
         def pasajerosAndenC = pasajeros().count{ Pasajero p -> 
             p.linea == "C" && !p.enVagon

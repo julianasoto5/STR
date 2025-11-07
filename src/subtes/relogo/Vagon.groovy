@@ -19,13 +19,14 @@ class Vagon extends ReLogoTurtle {
     def linea
     def capacidad = 20
     def ocupacion = 0
+	def desplazamiento = 0   // Desplazamiento vertical
     List<Pasajero> pasajeros = []  // lista de pasajeros a bordo
     
     def seguirSubte() {
         if (subtePadre) {
             setXcor(subtePadre.getXcor())
-            setYcor(subtePadre.getYcor())
-            setHeading(subtePadre.getHeading())
+            setYcor(subtePadre.getYcor()+ desplazamiento)
+            setHeading(0) // Misma dirección que el tren
         }
     }
     
@@ -35,28 +36,6 @@ class Vagon extends ReLogoTurtle {
 		p.setEstado("enVagon")
 		ocupacion++;
 	}
-	/*
-	def subirPasajero() {
-		// Si no hay espacio o no hay disponibles, salir rápido
-		def espacio = capacidad - ocupacion
-		if (espacio <= 0 ) return
-		//println("ok")
-		
-		// Agentset de pasajeros que están en el mismo patch (o muy cerca), del tipo correcto y que no estén ya en subte
-		def esteVagon = this   // Guardamos referencia al vagon
-		List<Pasajero> disponibles = pasajeros().asList().findAll{ p -> p instanceof Pasajero && (distance(p) < 1)&& p.linea == esteVagon.linea && !p.enVagon}
-		if(!disponibles.size()) return
-		
-		
-		// Pedimos al pasajero disponible que intente subirse, hasta completar espacio.
-		def p = disponibles.first()
-		ask (p){
-			p.subirA(esteVagon)
-			esteVagon.pasajeros.add(p)
-			ocupacion++
-		}
-	}
-	*/
 
 	//subirPasajeros() es para subir a TODOS los pasajeros que entren en UN TICK
 	def subirPasajeros() {
@@ -87,11 +66,9 @@ class Vagon extends ReLogoTurtle {
 	}
     
     def bajarPasajeros() {
-		
 	    pasajeros.forEach({ p ->
 			p.setEstado("bajarVagon");   
 	    })
-		
 	    pasajeros.clear()
 	    ocupacion = 0
 	}

@@ -14,6 +14,7 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
         addSliderWL("frecuenciaF", "Frecuencia llegada F (ticks)", 10, 1, 600, 200)
         addSliderWL("porcentaje_a_F", "% de pasajeros que pasan a F", 0, 0, 100, 0)
         addSliderWL("nuevos_usuarios", "Nuevos usuarios F", 0, 0, 500, 100)
+		//addSliderWL("numVagones", "Número de Vagones", 1, 1, 8, 3)  // Nuevo control
 		
 		//Elegir dia
 		addChooserWL("tipo_dia", "Tipo de día",tipo_dias, 0)

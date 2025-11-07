@@ -13,11 +13,13 @@ import subtes.ReLogoTurtle
 
 class Cabina extends ReLogoTurtle {
 	Subte subte
-	def desplazamiento
+	def desplazamiento // Desplazamiento vertical respecto al subte principal
+	
 	def seguirSubte() {
 		if (subte) {
 			setXcor(subte.getXcor())
 			setYcor(subte.getYcor()+desplazamiento)
+			setHeading(0) // Todas mirando hacia la misma dirección
 		}
 	}
 
