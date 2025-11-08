@@ -35,56 +35,37 @@ class Vagon extends ReLogoTurtle {
 		p.setEstado("enVagon")
 		ocupacion++;
 	}
-	/*
-	def subirPasajero() {
-		// Si no hay espacio o no hay disponibles, salir rápido
-		def espacio = capacidad - ocupacion
-		if (espacio <= 0 ) return
-		//println("ok")
-		
-		// Agentset de pasajeros que están en el mismo patch (o muy cerca), del tipo correcto y que no estén ya en subte
-		def esteVagon = this   // Guardamos referencia al vagon
-		List<Pasajero> disponibles = pasajeros().asList().findAll{ p -> p instanceof Pasajero && (distance(p) < 1)&& p.linea == esteVagon.linea && !p.enVagon}
-		if(!disponibles.size()) return
-		
-		
-		// Pedimos al pasajero disponible que intente subirse, hasta completar espacio.
-		def p = disponibles.first()
-		ask (p){
-			p.subirA(esteVagon)
-			esteVagon.pasajeros.add(p)
-			ocupacion++
-		}
-	}
-	*/
-
-	//subirPasajeros() es para subir a TODOS los pasajeros que entren en UN TICK
-	def subirPasajeros() {
-		def esteVagon = this   // Guardamos referencia al vagon
-		// Agentset de pasajeros que están en el mismo patch (o muy cerca), del tipo correcto y que no estén ya en subte
-		
-		List<Pasajero> disponibles = pasajeros().asList().findAll{ p -> (distance(p) < 1)&& p.linea == esteVagon.linea && !p.enVagon}
-		
-		// Si no hay espacio o no hay disponibles, salir rápido
-		def espacio = capacidad - ocupacion
-		if ((espacio <= 0) || (count(disponibles) == 0) ) return
 	
-		// Pedimos a cada pasajero disponible que intente subirse, hasta completar espacio.
-		for (d in disponibles){
-			if(espacio--) { 
-				ask(d){
-					esteVagon.pasajeros.add(d)
-					d.subirA(esteVagon)
+	
+	def subirPasajerosEnEstacion() {
+		def espacio = capacidad - ocupacion
+		if (espacio <= 0) return 
+		
+		def esteVagon = this
+		
+		
+		List<Pasajero> disponibles = pasajeros().asList().findAll{ p ->
+			p instanceof Pasajero &&
+			p.linea == esteVagon.linea &&
+			p.estado == "enEstacion"
+		}
+		
+		if (!disponibles.size()) return
+		
+		for (p in disponibles) {
+			if (espacio > 0) {
+				ask(p) {
+					p.subirA(esteVagon)
+					esteVagon.pasajeros.add(p)
 				}
+				ocupacion++
+				espacio--
+			} else {
+				break 
 			}
-			else break
 		}
-	
 	}
-	
-	def hayLugar() {
-		return (capacidad - ocupacion) > 0
-	}
+
     
     def bajarPasajeros() {
 		

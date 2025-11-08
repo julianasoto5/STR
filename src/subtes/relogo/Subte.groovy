@@ -14,16 +14,17 @@ import subtes.ReLogoTurtle
 class Subte extends ReLogoTurtle {
     def linea
     def estado
-    def velocidad = 0.01
-    Vagon vagon  // referencia al vagón asociado
+    def velocidad = 0.05
+    Vagon vagon  
 	Cabina cabinaDelantera
 	Cabina cabinaTrasera
 	def frecuencia 
 	def posInicial
 	def tiempoEnEstacion = 0
 	def tiempoEsperando = 0
-	Estacion estacion
-	def Ymin = -16.0
+	def tiempoEspera = 500
+	def Ymin = -32
+	def Ymax = 32
 	
 	def capacidad
 	
@@ -32,47 +33,55 @@ class Subte extends ReLogoTurtle {
 		
 		switch(estado) {
 			case "entrando":
-				fd (velocidad) //avanza
-				if(detectarEstacionCercana()) {
-					//setxy(0, getYcor())
+				fd (velocidad) 
+				
+				if(getYcor() <= 0) {
 					estado = "enEstacion"
 					tiempoEnEstacion = 0
 				}
 				break
+				
 			case "enEstacion":
-				//se podria hacer mas de una vez por tick
-				if(vagon.hayLugar() && !estacion.fila.empty)
-					vagon.subirPasajero(estacion.getPasajeroEnFila())
-				if(++tiempoEnEstacion >= 10000 || !vagon.hayLugar()) {
+					
+				if(++tiempoEnEstacion >= tiempoEspera) {
+					vagon.subirPasajerosEnEstacion()
 					estado = "saliendo"
 					tiempoEnEstacion = 0
-				}
-				//println("ESTACION posX = "+getXcor()+" posY = " + getYcor())
-				
+					setHeading(0)
+				}				
 				break
+				
 			case "saliendo":
 				fd(velocidad)
-				if(getYcor() <= Ymin) {
-					//el subte terminóla 'vuelta'. 
-					
+				
+				if(getYcor() >= Ymax-10) {
+					cabinaDelantera.hideTurtle()
+					cabinaTrasera.hideTurtle()
+					vagon.hideTurtle()
+					hideTurtle()
 					estado = "afuera" 
+					tiempoEsperando = 0
 				}
 				break
+				
 			case "afuera":
+			
 				vagon.bajarPasajeros()
-				cabinaDelantera.hideTurtle()
-				cabinaTrasera.hideTurtle()
-				vagon.hideTurtle()
+			
 				if(++tiempoEsperando == frecuencia) {	
 					
-					setxy(posInicial, 15)
-					cabinaDelantera.setXcor(posInicial+cabinaDelantera.desplazamiento)
-					cabinaTrasera.setXcor(posInicial+cabinaTrasera.desplazamiento)
-					vagon.setXcor(posInicial)
+					setxy(posInicial, Ymax-10)
+					cabinaDelantera.setxy(posInicial + cabinaDelantera.desplazamiento, Ymax-10) 
+                    cabinaTrasera.setxy(posInicial + cabinaTrasera.desplazamiento, Ymax-10) 
+                    vagon.setxy(posInicial, Ymax-10)
+					
+					setHeading(180)
+					
 					cabinaDelantera.showTurtle()
 					cabinaTrasera.showTurtle()
 					vagon.showTurtle()
 					showTurtle()
+					
 					estado = "entrando"
 					tiempoEsperando = 0
 				}
@@ -82,15 +91,14 @@ class Subte extends ReLogoTurtle {
     }
 	
 	def createFormacion() {
-		// Crear el vagón asociado a este subte
 		def me = this
 		cabinaDelantera = hatchCabinas(1){
 			setSubte(me)
-			setDesplazamiento(-5)
+			setDesplazamiento(-10)
 			setXcor(me.getXcor())
-			setYcor(me.getYcor()-5)
+			setYcor(me.getYcor()-10)
 			setColor(me.getColor())
-			setSize(5)
+			setSize(10)
 			setHeading(me.getHeading())
 			setLabel("FRONT")
 			
@@ -98,12 +106,12 @@ class Subte extends ReLogoTurtle {
 		
 		cabinaTrasera = hatchCabinas(1){
 			setSubte(me)
-			setDesplazamiento(5)
+			setDesplazamiento(10)
 			setXcor(me.getXcor())
-			setYcor(me.getYcor()+5)
+			setYcor(me.getYcor()+10)
 			setColor(me.getColor())
-			setSize(5)
-			setHeading(me.getHeading()+45)
+			setSize(10)
+			setHeading(me.getHeading())
 			setLabel("BACK")
 		}.first()
 		
@@ -113,7 +121,7 @@ class Subte extends ReLogoTurtle {
 			setXcor(me.getXcor())
 			setYcor(me.getYcor())
 			setColor(pink())
-			setSize(5)
+			setSize(10)
 			setCapacidad(capacidad)
 		}.first()
 		
@@ -122,14 +130,6 @@ class Subte extends ReLogoTurtle {
 			cabinaDelantera.setShape("subterojo")
 			cabinaTrasera.setShape("subterojo")
 		}
-	}
-	
-	def detectarEstacionCercana() {
-		// Buscar estaciones en la misma posición Y (con tolerancia)
-		def estacionesEnMismaY = estaciones().find { estacion ->
-			Math.abs(getYcor() - estacion.getYcor()) < 0.5  // Tolerancia de 0.5
-		}
-		return estacionesEnMismaY
 	}
 	
 }
