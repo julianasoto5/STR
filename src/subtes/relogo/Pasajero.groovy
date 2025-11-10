@@ -27,14 +27,15 @@ class Pasajero extends ReLogoTurtle {
             enVagon = true
             miVagon = v
 			hideTurtle()
-			
 			def tick_actual = RunEnvironment.getInstance().getCurrentSchedule().getTickCount()
 			
 			// 2. Calcular el tiempo de espera (Tiempo Final - Tiempo Inicial)
 			// Se realiza el casteo a (int) porque los ticks de Repast son doubles.
-			def tiempo_espera = (int)tick_actual - (int)tick_inicio
+			def tiempo_espera = tick_actual - tick_inicio
+			println("Tick espera> "+tiempo_espera+"    tick_inicio> "+tick_inicio)
 			
-			// 3. Obtener el observador (¡SIN PARÉNTESIS!)
+			
+			//. Obtener el observador (¡SIN PARÉNTESIS!)
 			def obs = myObserver // 4. Reportar al Observer.
 			obs.registrarTiempoEspera(linea, tiempo_espera as int)
 			

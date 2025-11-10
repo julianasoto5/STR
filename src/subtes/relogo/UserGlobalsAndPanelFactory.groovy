@@ -11,8 +11,8 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
         // Entradas configurables
         addSliderWL("capacidadC", "Capacidad subte C", 100, 50, 500, 300)
         addSliderWL("capacidadF", "Capacidad subte F", 100, 50, 500, 300)
-        addSliderWL("frecuenciaC", "Frecuencia llegada C (ticks)", 10, 1, 10000, 200)
-        addSliderWL("frecuenciaF", "Frecuencia llegada F (ticks)", 10, 1, 10000, 200)
+        addSliderWL("frecuenciaC", "Frecuencia llegada C (ticks)", 200, 1, 3600, 200)
+        addSliderWL("frecuenciaF", "Frecuencia llegada F (ticks)", 200, 1, 3600, 200)
         addSliderWL("porcentaje_a_F", "% de pasajeros que pasan a F", 0, 0, 100, 0)
         addSliderWL("nuevos_usuarios", "Nuevos usuarios F", 0, 0, 500, 100)
 		

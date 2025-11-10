@@ -13,7 +13,7 @@ class UserObserver extends ReLogoObserver{
 
 	def limAnden = 24
 	
-	def TIEMPO_TOTAL_SIMULACION = 12000
+	def TIEMPO_TOTAL_SIMULACION = 36000 //
 	
 	def PASAJEROS_TOTAL_C 
 	def PASAJEROS_TOTAL_F
@@ -146,7 +146,8 @@ class UserObserver extends ReLogoObserver{
 		if (total_subidos_C > 0) {
 			// Suma todos los tiempos y los divide por el total de pasajeros subidos
 			def suma_C = tiempos_espera_C.sum() ?: 0
-			tiempo_promedio_C = suma_C / total_subidos_C
+			println("SUMA> "+suma_C)
+			tiempo_promedio_C = suma_C / tiempos_espera_C.size()
 		}
 		if (total_subidos_F > 0) {
 			def suma_F = tiempos_espera_F.sum() ?: 0
@@ -183,46 +184,6 @@ class UserObserver extends ReLogoObserver{
 		}
 	}
 	
-	def setupVagon(Subte subte) {
-		// Crear el vagón asociado a este subte
-		subte.vagon = createVagones(1) {
-			setSubtePadre(subte)
-			setLinea(subte.linea)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor())
-			setShape("square")
-			setColor(pink())
-			setSize(3.5)
-		}.first()
-	}
-	
-	def setupCabinas(Subte subte) {
-		setDefaultShape(Cabina, "truck")
-		
-		// Crear el vagón asociado a este subte
-		subte.cabinaDelantera = createCabinas(1) {
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()-5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(0)
-			setLabel("FRONT")
-		}.first()
-		
-		subte.cabinaTrasera = createCabinas(1){
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()+5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(180)
-			setLabel("BACK")
-		}.first()
-		
-	}
-
-	
 	def getTotalPasajerosBase(String tipoDia) {
 		switch (tipoDia) {
 			case "laboral":
@@ -244,12 +205,11 @@ class UserObserver extends ReLogoObserver{
 	def registrarTiempoEspera(String linea, int tiempo) {
 		if (linea == "C") {
 			tiempos_espera_C.add(tiempo)
-			total_subidos_C += 1
 		} else if (linea == "F") {
 			tiempos_espera_F.add(tiempo)
-			total_subidos_F += 1
 		}
 	}
+	
 	
 	def crearPasajero(String lineaDestino) {
 		def xRange = (lineaDestino == "C") ? [1, 24] : [-24, -1]

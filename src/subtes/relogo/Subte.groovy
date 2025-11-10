@@ -22,9 +22,10 @@ class Subte extends ReLogoTurtle {
 	def posInicial
 	def tiempoEnEstacion = 0
 	def tiempoEsperando = 0
-	def tiempoEspera = 500
+	def tiempoEspera = 150
 	def Ymin = -32
 	def Ymax = 32
+	def l=0
 	
 	def capacidad
 	
@@ -53,7 +54,7 @@ class Subte extends ReLogoTurtle {
 				
 			case "saliendo":
 				fd(velocidad)
-				
+				//if(!l++) println("Ocupacion: "+vagon.getOcupacion())
 				if(getYcor() >= Ymax-10) {
 					cabinaDelantera.hideTurtle()
 					cabinaTrasera.hideTurtle()
@@ -61,6 +62,7 @@ class Subte extends ReLogoTurtle {
 					hideTurtle()
 					estado = "afuera" 
 					tiempoEsperando = 0
+					l=0
 				}
 				break
 				
@@ -92,6 +94,7 @@ class Subte extends ReLogoTurtle {
 	
 	def createFormacion() {
 		def me = this
+		
 		cabinaDelantera = hatchCabinas(1){
 			setSubte(me)
 			setDesplazamiento(-10)
@@ -122,7 +125,7 @@ class Subte extends ReLogoTurtle {
 			setYcor(me.getYcor())
 			setColor(pink())
 			setSize(10)
-			setCapacidad(capacidad)
+			capacidad = me.capacidad
 		}.first()
 		
 		if(linea == "F") {

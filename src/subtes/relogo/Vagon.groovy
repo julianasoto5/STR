@@ -17,7 +17,7 @@ import subtes.ReLogoTurtle
 class Vagon extends ReLogoTurtle {
     Subte subtePadre
     def linea
-    def capacidad = 20
+    def capacidad = 0
     def ocupacion = 0
     List<Pasajero> pasajeros = []  // lista de pasajeros a bordo
     
@@ -38,7 +38,7 @@ class Vagon extends ReLogoTurtle {
 	
 	
 	def subirPasajerosEnEstacion() {
-		def espacio = capacidad - ocupacion
+		def espacio = capacidad - ocupacion 
 		if (espacio <= 0) return 
 		
 		def esteVagon = this

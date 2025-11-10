@@ -215,6 +215,203 @@ public class ReLogoTurtle extends BaseTurtle{
 	}
 
 	/**
+	 * Makes a number of new estaciones and then executes a set of commands on the
+	 * created estaciones.
+	 * 
+	 * @param number
+	 *            a number
+	 * @param closure
+	 *            a set of commands
+	 * @return created estaciones
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> hatchEstaciones(int number, Closure closure) {
+		AgentSet<subtes.relogo.Estacion> result = new AgentSet<>();
+		AgentSet<Turtle> createResult = this.hatch(number,closure,"Estacion");
+		for (Turtle t : createResult){
+			if (t instanceof subtes.relogo.Estacion){
+				result.add((subtes.relogo.Estacion)t);
+			}
+		} 
+		return result;
+	}
+
+	/**
+	 * Makes a number of new estaciones and then executes a set of commands on the
+	 * created estaciones.
+	 * 
+	 * @param number
+	 *            a number
+	 * @param closure
+	 *            a set of commands
+	 * @return created estaciones
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> hatchEstaciones(int number) {
+		return hatchEstaciones(number,null);
+	}
+
+	/**
+	 * Returns an agentset of estaciones from the patch of the caller.
+	 * 
+	 * @return agentset of estaciones from the caller's patch
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estacionesHere(){
+	  Grid grid = getMyObserver().getGrid();
+	  GridPoint gridPoint = grid.getLocation(this);
+	  AgentSet<subtes.relogo.Estacion> result = new AgentSet<subtes.relogo.Estacion>();
+	  for (Turtle t : Utility.getTurtlesOnGridPoint(gridPoint,getMyObserver(),"estacion")){
+			if (t instanceof subtes.relogo.Estacion)
+			result.add((subtes.relogo.Estacion)t);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the agentset of estaciones on the patch at the direction (ndx, ndy) from the
+	 * caller.
+	 * 
+	 * @param nX
+	 *            a number
+	 * @param nY
+	 *            a number
+	 * @returns agentset of estaciones at the direction (nX, nY) from the caller
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estacionesAt(Number nX, Number nY){
+		double dx = nX.doubleValue();
+		double dy = nY.doubleValue();
+		double[] displacement = {dx,dy};
+
+		try{
+		GridPoint gridPoint = Utility.getGridPointAtDisplacement(getTurtleLocation(),displacement,getMyObserver());
+		AgentSet<subtes.relogo.Estacion> result = new AgentSet<subtes.relogo.Estacion>();						
+		for (Turtle t : Utility.getTurtlesOnGridPoint(gridPoint,getMyObserver(),"estacion")){
+			if (t instanceof subtes.relogo.Estacion)
+			result.add((subtes.relogo.Estacion)t);
+		}
+		return result;
+		}
+		catch(SpatialException e){
+			return new AgentSet<subtes.relogo.Estacion>();
+		}
+	}
+
+	/**
+	 * Returns an agentset of estaciones on a given patch.
+	 * 
+	 * @param p
+	 *            a patch
+	 * @return agentset of estaciones on patch p
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estacionesOn(Patch p){
+		AgentSet<subtes.relogo.Estacion> result = new AgentSet<subtes.relogo.Estacion>();						
+		for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),getMyObserver(),"estacion")){
+			if (t instanceof subtes.relogo.Estacion)
+			result.add((subtes.relogo.Estacion)t);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an agentset of estaciones on the same patch as a turtle.
+	 * 
+	 * @param t
+	 *            a turtle
+	 * @return agentset of estaciones on the same patch as turtle t
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estacionesOn(Turtle t){
+		AgentSet<subtes.relogo.Estacion> result = new AgentSet<subtes.relogo.Estacion>();						
+		for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),getMyObserver(),"estacion")){
+			if (tt instanceof subtes.relogo.Estacion)
+			result.add((subtes.relogo.Estacion)tt);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an agentset of estaciones on the patches in a collection or on the patches
+	 * that a collection of turtles are.
+	 * 
+	 * @param a
+	 *            a collection
+	 * @return agentset of estaciones on the patches in collection a or on the patches
+	 *         that collection a turtles are
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estacionesOn(Collection c){
+
+		if (c == null || c.isEmpty()){
+			return new AgentSet<subtes.relogo.Estacion>();
+		}
+
+		Set<subtes.relogo.Estacion> total = new HashSet<subtes.relogo.Estacion>();
+		if (c.iterator().next() instanceof Turtle){
+			for (Object o : c){
+				if (o instanceof Turtle){
+					Turtle t = (Turtle) o;
+					total.addAll(estacionesOn(t));
+				}
+			}
+		}
+		else {
+			for (Object o : c){
+				if (o instanceof Patch){
+					Patch p = (Patch) o;
+					total.addAll(estacionesOn(p));
+				}
+			}
+		}
+		return new AgentSet<subtes.relogo.Estacion>(total);
+	}
+
+	/**
+	 * Queries if object is a estacion.
+	 * 
+	 * @param o
+	 *            an object
+	 * @return true or false based on whether the object is a estacion
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public boolean isEstacionQ(Object o){
+		return (o instanceof subtes.relogo.Estacion);
+	}
+
+	/**
+	 * Returns an agentset containing all estaciones.
+	 * 
+	 * @return agentset of all estaciones
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public AgentSet<subtes.relogo.Estacion> estaciones(){
+		AgentSet<subtes.relogo.Estacion> a = new AgentSet<subtes.relogo.Estacion>();
+		for (Object e : this.getMyObserver().getContext().getObjects(subtes.relogo.Estacion.class)) {
+			if (e instanceof subtes.relogo.Estacion){
+				a.add((subtes.relogo.Estacion)e);
+			}
+		}
+		return a;
+	}
+
+	/**
+	 * Returns the estacion with the given who number.
+	 * 
+	 * @param number
+	 *            a number
+	 * @return turtle number
+	 */
+	@ReLogoBuilderGeneratedFor("subtes.relogo.Estacion")
+	public subtes.relogo.Estacion estacion(Number number){
+		Turtle turtle = Utility.turtleU(number.intValue(), getMyObserver());
+		if (turtle instanceof subtes.relogo.Estacion)
+			return (subtes.relogo.Estacion) turtle;
+		return null;
+	}
+
+	/**
 	 * Makes a number of new pasajeros and then executes a set of commands on the
 	 * created pasajeros.
 	 * 
