@@ -11,8 +11,10 @@ import subtes.ReLogoObserver;
 
 class UserObserver extends ReLogoObserver{
 
+	def limAnden = 24
+	def cant = 0
 	
-	def TIEMPO_TOTAL_SIMULACION = 10000
+	def TIEMPO_TOTAL_SIMULACION = 24000 //
 	
 	def PASAJEROS_TOTAL_C 
 	def PASAJEROS_TOTAL_F
@@ -21,14 +23,19 @@ class UserObserver extends ReLogoObserver{
 	def frecuencia_hatch_F = 0.0
 	
 	def ticks = 0
-	
-	def TIPO_DE_DIA = "domingo_partido"
-	def tipo_dia
-	def PORCENTAJE_A_F = 30           // 30% del total base usa F
-	def NUEVOS_USUARIOS_F = 0
+
 	def base_total
 	def estacionF, estacionC
-	def capacidadC, capacidadF,frecuenciaC, frecuenciaF, porcentaje_a_F, nuevos_usuarios, andenC_ocupacion, andenF_ocupacion, transferidos
+	
+	def tiempos_espera_C = []     // Almacena todos los tiempos individuales de la Línea C
+	def tiempos_espera_F = []
+	def total_subidos_C = 0       // Cuenta cuántos pasajeros subieron
+	def total_subidos_F = 0
+	def tiempo_promedio_C = 0.0   // El resultado del promedio
+	def tiempo_promedio_F = 0.0
+	
+	def max_anden_C = 0.0  
+	def max_anden_F = 0.0
 	
 	Subte subteC = null, subteF = null
 	 @Setup
@@ -37,8 +44,8 @@ class UserObserver extends ReLogoObserver{
 		
 		base_total = getTotalPasajerosBase(tipo_dia)
 		
-		PASAJEROS_TOTAL_C = (int) (base_total * (1 - PORCENTAJE_A_F / 100.0))
-		PASAJEROS_TOTAL_F = (int) (base_total * (PORCENTAJE_A_F / 100.0) + NUEVOS_USUARIOS_F)
+		PASAJEROS_TOTAL_C = (int) (base_total * (1 - porcentaje_a_F / 100.0))
+		PASAJEROS_TOTAL_F = (int) (base_total * (porcentaje_a_F / 100.0) + nuevos_usuarios)
 		
 		if (PASAJEROS_TOTAL_C > 0) {
 			frecuencia_hatch_C = TIEMPO_TOTAL_SIMULACION / PASAJEROS_TOTAL_C
@@ -52,54 +59,15 @@ class UserObserver extends ReLogoObserver{
 			frecuencia_hatch_F = TIEMPO_TOTAL_SIMULACION
 		}
 		
-/*		createTests(1){
-			setShape("estacion2")  // Tu png de fondo
-			setxy(0, 0)
-			size = 30  // Muy grande
-			setLabel("")
-			// Hacer que se quede atrás de otros agentes
-		}
-*/		setDefaultShape(Pasajero, "person")
-        setDefaultShape(Estacion, "flag")
+		setDefaultShape(Pasajero, "person")
 		setDefaultShape(Subte, "default")
 		setDefaultShape(Cabina, "subteazul")
 		setDefaultShape(Vagon, "vagonazul")
-	    // Pintamos los patches
-	    ask(patches()) {
-	        if (pxcor > 5) { //5-16
-	            setPcolor(blue())   // Andén C
-	        } 
-	        else if ((pxcor < 0)&&(pxcor > -11)) { //-11 - 0
-	            setPcolor(green())  // Andén F
-	        }
-	        else {
-	            setPcolor(black())  
-	        }
-	    }
 
-
-		
-		 estacionC = createEstaciones(1){
-			linea = "C"
-			xMin = 5
-			xMax = 17
-			setxy(9, 0)
-			setSize(4)
-			setColor(red())
-			setLabel("DIA "+tipo_dia)
-		}.first()
-		
-		estacionF = createEstaciones(1){
-			linea = "F"
-			xMin = -11
-			xMax = 0
-			setxy(-8, 0)
-			setSize(4)
-			setColor(yellow())
-		}.first()
+		setupFondo()
 		
 		// Crear pasajeros de la línea C (andén azul)
-		createPasajeros(100) {
+		/*createPasajeros(100) {
 			estacion = estacionC
 			setColor(white())
 			setxy(random(11) + 5, randomYcor())
@@ -112,20 +80,17 @@ class UserObserver extends ReLogoObserver{
 			setColor(yellow())
 			setxy(random(11) - 11, randomYcor())
 			setHeading(random(2) == 0 ? 0 : 180)
-		}
-		
-		
-		
+		}*/
+			
 		subteC = createSubtes(1){
 			linea = "C"
 			estado = "entrando"
-			posInicial = 2.5
+			posInicial = limAnden+4
 			frecuencia = frecuenciaC
-			estacion = estacionC
 			capacidad = capacidadC
 			setColor(blue())
-			setxy(posInicial, 15)
-			setSize(0)
+			setxy(posInicial, 22)
+			setSize(10)
 			setHeading(180)
 			hideTurtle()
 			
@@ -134,42 +99,41 @@ class UserObserver extends ReLogoObserver{
 		subteF = createSubtes(1){
 			linea = "F"
 			estado = "entrando"
-			posInicial = -13.5
+			posInicial = -limAnden-4
 			frecuencia = frecuenciaF
-			estacion = estacionF
 			capacidad = capacidadF
 			setColor(green())
-			setxy(posInicial, 15)
-			setSize(0)
+			setxy(posInicial, 22)
+			setSize(10)
 			setHeading(180)
 			hideTurtle()
 		}.first()// ← .first() para obtener el Subte individual
 				
 		subteF.createFormacion()
 		subteC.createFormacion()
-		/*setupVagon(subteC)  // Ahora son Subte individuales
-		setupVagon(subteF)
-		
-		setupCabinas(subteC)
-		setupCabinas(subteF)
-		*/
-		
-		
 
 	 }
     
-
-    @Go
-    def go() {
+	 def acumC = 0.0
+	 def acumF = 0.0
+	@Go
+	def go() {
 		
 		ticks += 1
-		if (frecuencia_hatch_C > 0 && (ticks % (int)frecuencia_hatch_C == 0)) {
+		// Línea C
+		acumC += 1
+		if (acumC >= frecuencia_hatch_C) {
 			crearPasajero("C")
+			acumC -= frecuencia_hatch_C
 		}
 		
-		if (frecuencia_hatch_F > 0 && (ticks % (int)frecuencia_hatch_F == 0)) {
+		// Línea F
+		acumF += 1
+		if (acumF >= frecuencia_hatch_F) {
 			crearPasajero("F")
+			acumF -= frecuencia_hatch_F
 		}
+
 		ask(pasajeros()) {
 			mover()
 		}
@@ -185,93 +149,94 @@ class UserObserver extends ReLogoObserver{
 		ask(cabinas()){
 			seguirSubte()
 		}
+		
+		if (ticks > TIEMPO_TOTAL_SIMULACION) {
+			stop()
+		}
+		
+		if (tiempos_espera_C.size()) {
+			// Suma todos los tiempos y los divide por el total de pasajeros subidos
+			def suma_C = tiempos_espera_C.sum() ?: 0
+			tiempo_promedio_C = suma_C / tiempos_espera_C.size()
+			println("Prom C "+tiempo_promedio_C)
+		}
+		if (tiempos_espera_F.size()) {
+			def suma_F = tiempos_espera_F.sum() ?: 0
+			tiempo_promedio_F = suma_F / tiempos_espera_F.size()
+			println("Prom F "+tiempo_promedio_F)
+		}
 
-    }
-	
-	def setupVagon(Subte subte) {
-		// Crear el vagón asociado a este subte
-		subte.vagon = createVagones(1) {
-			setSubtePadre(subte)
-			setLinea(subte.linea)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor())
-			setShape("square")
-			setColor(pink())
-			setSize(3.5)
-		}.first()
 	}
+  
 	
-	def setupCabinas(Subte subte) {
-		setDefaultShape(Cabina, "truck")
-		
-		// Crear el vagón asociado a este subte
-		subte.cabinaDelantera = createCabinas(1) {
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()-5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(0)
-			setLabel("FRONT")
-		}.first()
-		
-		subte.cabinaTrasera = createCabinas(1){
-			setSubte(subte)
-			setXcor(subte.getXcor())
-			setYcor(subte.getYcor()+5)
-			setColor(subte.getColor())
-			setSize(5)
-			setHeading(180)
-			setLabel("BACK")
-		}.first()
-		
+	def setupFondo() {
+		ask(patches()){
+			setPcolor(gray()+2) //Fondo
+			if ((pxcor == -22 && pxcor == -21) || (pxcor == 22 && pxcor == 21)) { setPcolor(yellow()) } //Líneas de seguridad
+			if (pxcor == 0) { setPcolor(black()) } //Separador
+			
+			//Anden Subte F (-24 a -32)
+			if (pxcor <= -limAnden) {
+				if (pycor < -30) setPcolor(gray()-3) //Fin del anden
+				else {
+					if ((pxcor == -26) || (pxcor == -30)) setPcolor(gray()-2)	//Rieles
+					else if(pxcor <= -25 && pxcor >= -31 && pycor % 2 == 0) setPcolor(brown()+1) //Tablas
+						else setPcolor(brown()-2)//Tierra
+				}
+			}
+			
+			//Anden Subte C (24 a 32)
+			if (pxcor >= limAnden) {
+				if (pycor < -30) setPcolor(gray()-3) //Fin del anden
+				else {
+					if ((pxcor == 26) || (pxcor == 30)) setPcolor(gray()-2)	//Rieles
+					else if(pxcor >= 25 && pxcor <= 31 && pycor % 2 == 0) setPcolor(brown()+1) //Tablas
+							else setPcolor(brown()-2)//Tierra
+				}
+			}
+		}
 	}
-
 	
 	def getTotalPasajerosBase(String tipoDia) {
 		switch (tipoDia) {
 			case "laboral":
-				return 100
+				return 18086              
 			case "sabado":
-				return 60
+				return 7020           
 			case "domingo":
-				return 40
-			
-			case "laboral_partido":
-				return 150
-			case "sabado_partido":
-				return 120
-			case "domingo_partido":
-				return 80
-			default:
-				return 50
+				return 2785      		
 		}
 	}
+	
+	def registrarTiempoEspera(String linea, int tiempo) {
+		if (linea == "C") {
+			tiempos_espera_C.add(tiempo)
+		} else if (linea == "F") {
+			tiempos_espera_F.add(tiempo)
+		}
+	}
+	
 	
 	def crearPasajero(String lineaDestino) {
-		def xRange = (lineaDestino == "C") ? [6, 14] : [-10, -2]
+		def xRange = (lineaDestino == "C") ? [1, 24] : [-24, -1]
 		def colorPasajero = (lineaDestino == "C") ? white() : yellow()
-		
+		cant++
+		println(cant)
 		createPasajeros(1) {
 			linea = lineaDestino
-			estacion = (linea == "C") ? estacionC : estacionF
 			setColor(colorPasajero)
+			setSize(2.5)
 			setxy(random(xRange[1] - xRange[0]) + xRange[0], randomYcor())
-			//tick_inicio = ticks
+			tick_inicio = ticks
 		}
 	}
 	
-	
-	/* FUNCIONES PARA MOSTRAR EN EL MONITOR	*/
-	//addMonitorWL("andenC_ocupacion", "Personas en andén C", 5)
-	//addMonitorWL("andenF_ocupacion", "Personas en andén F", 5)
-	//addMonitorWL("transferidos", "Pasajeros transferidos a F", 5)
-	//addMonitorWL("getEspacioC", "Espacio en linea C", 1)
-	//addMonitorWL("getEspacioF", "Espacio en linea F", 1)
 	def andenC_ocupacion() {
         def pasajerosAndenC = pasajeros().count{ Pasajero p -> 
-            p.linea == "C" && !p.enVagon
-        }
+            p.linea == "C" && !p.enVagon}
+		if(pasajerosAndenC > max_anden_C)
+			max_anden_C = pasajerosAndenC
+		println("Max C "+max_anden_C)
         return pasajerosAndenC
     }
 	
@@ -279,9 +244,33 @@ class UserObserver extends ReLogoObserver{
 		def pasajerosAndenF = pasajeros().count(){Pasajero p->
 			p.linea == "F" && !p.enVagon
 		}
+		if(pasajerosAndenF > max_anden_F)
+			max_anden_F = pasajerosAndenF
+		println("Max F "+max_anden_F)
 		return pasajerosAndenF
 	}
 	
+	def andenC_total() {
+		return PASAJEROS_TOTAL_C
+	}
 	
-
+	def andenF_total() {
+		return PASAJEROS_TOTAL_F
+	}
+	
+	def get_tiempo_promedio_C() {
+		return tiempo_promedio_C
+	}
+	
+	def get_tiempo_promedio_F() {
+		return tiempo_promedio_F
+	}
+	
+	def get_max_anden_C() {
+		return max_anden_C
+	}	
+	def get_max_anden_F() {
+		return max_anden_F
+	}
+	
 }

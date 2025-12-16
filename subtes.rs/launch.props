@@ -1,0 +1,6 @@
+#
+#Tue Nov 11 23:07:56 ART 2025
+incoming=tcp\://127.0.0.1\:5555
+outgoing=tcp\://127.0.0.1\:5556
+scenario=..\\subtes.rs
+working.directory=../

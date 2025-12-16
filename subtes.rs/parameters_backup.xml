@@ -6,12 +6,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 											/>
 				<parameter name="default_observer_minPycor" displayName="default_observer_minPycor" type="int" 
-						defaultValue="-32" 
+						defaultValue="-40" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 											/>
 				<parameter name="default_observer_maxPycor" displayName="default_observer_maxPycor" type="int" 
-						defaultValue="32" 
+						defaultValue="40" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 											/>
